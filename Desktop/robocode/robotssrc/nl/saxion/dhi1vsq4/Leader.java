@@ -10,8 +10,6 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 public class Leader extends TeamRobot {
     int previousEnergy = 100;
     private double lowest = 500;
-    private double lowestX;
-    private double lowestY;
     private Point2D lowestRobotLocation;
     private RobotStatus robotStatus;
 
@@ -24,7 +22,6 @@ public class Leader extends TeamRobot {
             setAdjustGunForRobotTurn(true);
         while (true) {
             scan();
-            pow(lowestX, lowestY);
             setAhead(300);
             setTurnLeft(180);
 
@@ -71,30 +68,6 @@ public class Leader extends TeamRobot {
         execute();
     }
 
-    public void pow(double x, double y) {
-        double xo = x - getX();
-        double yo = y - getY();
-        double hyp = Point2D.distance(getX(), getY(), x, y);
-        double arcSin = Math.toDegrees(Math.asin(xo / hyp));
-        double bearing = 0;
-
-        System.out.println("arcsin " + arcSin);
-
-        if (xo > 0 && yo > 0) { // both pos: lower-Left
-            bearing = arcSin;
-        } else if (xo < 0 && yo > 0) { // x neg, y pos: lower-right
-            bearing = 360 + arcSin; // arcsin is negative here, actuall 360 - ang
-        } else if (xo > 0 && yo < 0) { // x pos, y neg: upper-left
-            bearing = 180 - arcSin;
-        } else if (xo < 0 && yo < 0) { // both neg: upper-right
-            bearing = 180 - arcSin; // arcsin is negative here, actually 180 + ang
-        }
-
-        System.out.println("absolute bearing " + bearing);
-        System.out.println("our gun heading " + getGunHeading());
-
-        setTurnGunRight(bearing - getGunHeading());
-    }
 
     public void onStatus(StatusEvent e) {
         this.robotStatus = e.getStatus();
@@ -111,16 +84,9 @@ public class Leader extends TeamRobot {
             // Calculate the angle to the scanned robot
             double angle = Math.toRadians((robotStatus.getHeading() + angleToEnemy % 360));
 
-            // Calculate the coordinates of the robot
-            this.lowestX = (robotStatus.getX() + Math.sin(angle) * e.getDistance());
-            this.lowestY = (robotStatus.getY() + Math.cos(angle) * e.getDistance());
-
-            lowestRobotLocation = new Point2D.Double(lowestX, lowestY);
-            System.out.println(lowestRobotLocation);
-
         }
         if(isTeammate(e.getName())){
-            return ;}
+         System.out.println("isTeam");}
         else {
         setFire(Math.min(400 / e.getDistance(), 3));
         }
