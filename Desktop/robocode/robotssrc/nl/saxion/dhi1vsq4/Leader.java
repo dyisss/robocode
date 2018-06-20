@@ -107,6 +107,7 @@ public class Leader extends TeamRobot {
                             - getRadarHeadingRadians();
 
             setTurnRadarRightRadians(Utils.normalRelativeAngle(radarTurn));
+            setTurnGunRightRadians(Utils.normalRelativeAngle(radarTurn));
             setFire(Math.min(400 / e.getDistance(), 3));
         }
     }
