@@ -4,8 +4,8 @@ import robocode.*;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
-
-import static robocode.util.Utils.normalRelativeAngleDegrees;
+import java.util.Arrays;
+import java.util.Vector;
 
 public class Leader extends TeamRobot {
     int previousEnergy = 100;
@@ -17,9 +17,21 @@ public class Leader extends TeamRobot {
         setAdjustRadarForRobotTurn(true);
         setAdjustGunForRobotTurn(true);
 
-        String[] teammates = getTeammates();
-        for (int i = 0; i < teammates.length; i++)
+        if(getEnergy()>199.0){ //220 if leader is a droid, 200 otherwise.
+            String[] teammates = getTeammates();
+            Vector<String> v = new Vector<String>();
+            v.add(getName());
+            v.addAll(Arrays.asList(teammates));
+
+            teammates = (String[]) v.toArray();
+            try{
+                TeamMessage teamMessage = new TeamMessage(teammates);
+                MessageEvent TeammateEvent = new MessageEvent("Leader",teamMessage);
+                broadcastMessage(TeammateEvent);
+            }catch(Exception ignored){}
+        }
             setAdjustGunForRobotTurn(true);
+        //noinspection InfiniteLoopStatement
         while (true) {
             scan();
             setAhead(300);
@@ -76,19 +88,19 @@ public class Leader extends TeamRobot {
     @Override
     public void onScannedRobot(ScannedRobotEvent e) {
         bulletShielding(e);
-        if (e.getEnergy() <= lowest) {
-            this.lowest = e.getEnergy();
 
-            double angleToEnemy = e.getBearing();
-
-            // Calculate the angle to the scanned robot
-            double angle = Math.toRadians((robotStatus.getHeading() + angleToEnemy % 360));
-
-        }
         if(isTeammate(e.getName())){
          System.out.println("isTeam");}
         else {
-        setFire(Math.min(400 / e.getDistance(), 3));
+            if (e.getEnergy() <= lowest) {
+                this.lowest = e.getEnergy();
+                double angleToEnemy = e.getBearing();
+
+                // Calculate the angle to the scanned robot
+                double angle = Math.toRadians((robotStatus.getHeading() + angleToEnemy % 360));
+                setFire(Math.min(400 / e.getDistance(), 3));
+            }
+
         }
     }
 

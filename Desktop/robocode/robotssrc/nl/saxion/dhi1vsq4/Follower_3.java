@@ -10,7 +10,7 @@ import java.awt.geom.Point2D;
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 public class Follower_3 extends TeamRobot {
-
+    private String[] teamlist;
 
 
     public void run() {
@@ -45,6 +45,10 @@ public class Follower_3 extends TeamRobot {
     public void onMessageReceived(MessageEvent event) {
         if (event.getMessage() instanceof Message){
             Message message = (Message) event.getMessage();
+        }
+        if(event.getMessage() instanceof TeamMessage){
+            TeamMessage message = (TeamMessage) event.getMessage();
+            teamlist = message.getTeamMates();
         }
     }
 
