@@ -13,6 +13,7 @@ public class Leader extends TeamRobot {
     private double lowest = 500;
     private Point2D lowestRobotLocation;
     private RobotStatus robotStatus;
+    private boolean lockedOn = false;
 
     public void run() {
         setAdjustRadarForRobotTurn(true);
@@ -31,9 +32,10 @@ public class Leader extends TeamRobot {
                 broadcastMessage(TeammateEvent);
             }catch(Exception ignored){}
         }
-            setAdjustGunForRobotTurn(true);
         while (true) {
-            scan();
+            if (!lockedOn) {
+                scan();
+            }
             setAhead(300);
             setTurnLeft(180);
 
@@ -97,19 +99,31 @@ public class Leader extends TeamRobot {
 //            double angle = Math.toRadians((robotStatus.getHeading() + angleToEnemy % 360));
 //
 //        }
-        if(isTeammate(e.getName())){
-            System.out.println("isTeam");}
-        else {
-            double radarTurn =
-                    // Absolute bearing to target
-                    getHeadingRadians() + e.getBearingRadians()
-                            // Subtract current radar heading to get turn required
-                            - getRadarHeadingRadians();
+        if (e.getEnergy() > 0){
+            lockedOn = true;
+            if(isTeammate(e.getName())){
+                System.out.println("isTeam");}
+            else {
+                double radarTurn =
+                        // Absolute bearing to target
+                        getHeadingRadians() + e.getBearingRadians()
+                                // Subtract current radar heading to get turn required
+                                - getRadarHeadingRadians();
 
-            setTurnRadarRightRadians(Utils.normalRelativeAngle(radarTurn));
-            setTurnGunRightRadians(Utils.normalRelativeAngle(radarTurn));
-            setFire(Math.min(400 / e.getDistance(), 3));
+                double gunTurn =
+                        // Absolute bearing to target
+                        getHeadingRadians() + e.getBearingRadians()
+                                // Subtract current radar heading to get turn required
+                                - getGunHeadingRadians();
+
+                setTurnRadarRightRadians(Utils.normalRelativeAngle(radarTurn));
+                setTurnGunRightRadians(Utils.normalRelativeAngle(gunTurn));
+                setFire(Math.min(400 / e.getDistance(), 3));
+            }
+        }else{
+            lockedOn = false;
         }
+
     }
 
 
