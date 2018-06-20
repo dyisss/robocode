@@ -9,7 +9,7 @@ import java.awt.geom.Point2D;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
-public class group4_1 extends TeamRobot {
+public class Follower_2 extends TeamRobot {
     Point2D lowestEnemyLocation;
     private double lowestX;
     private double lowestY;

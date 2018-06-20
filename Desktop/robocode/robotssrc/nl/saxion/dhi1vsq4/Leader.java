@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
-public class group4 extends TeamRobot {
+public class Leader extends TeamRobot {
     int previousEnergy = 100;
     private double lowest = 500;
     private double lowestX;
